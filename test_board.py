@@ -23,7 +23,7 @@ class TestMinesweeper(unittest.TestCase):
         self.assertEqual(height, len(game.board), 'Board height incorrect.')
 
         for row in range(height):
-            self.assertFalse(any(game.board[row]),
+            self.assertFalse(any([s.is_mine for s in game.board[row]]),
                              ("Mine found when board was generated " +
                               "with mineCount = 0."))
 
@@ -41,8 +41,8 @@ class TestMinesweeper(unittest.TestCase):
         self.assertEqual(width, len(game.board[0]), 'Board width incorrect.')
         self.assertEqual(height, len(game.board), 'Board height incorrect.')
 
-        minesFound = (sum(game.board[row][col] for col in range(width)
-                      for row in range(height)))
+        minesFound = (sum(1 for row in range(height)
+                      for col in range(width) if game.board[row][col].is_mine))
 
         self.assertEqual(width * height - 1, minesFound,
                          'Wrong number of mines found.')
@@ -62,7 +62,7 @@ class TestMinesweeper(unittest.TestCase):
         self.assertEqual(width, len(game.board[0]), 'Board width incorrect.')
         self.assertEqual(height, len(game.board), 'Board height incorrect.')
 
-        minesFound = (sum(game.board[row][col] for col in range(width)
+        minesFound = (sum(game.board[row][col].is_mine for col in range(width)
                       for row in range(height)))
 
         self.assertEqual(mines, minesFound,
@@ -83,7 +83,7 @@ class TestMinesweeper(unittest.TestCase):
         self.assertEqual(width, len(game.board[0]), 'Board width incorrect.')
         self.assertEqual(height, len(game.board), 'Board height incorrect.')
 
-        minesFound = (sum(game.board[row][col] for col in range(width)
+        minesFound = (sum(game.board[row][col].is_mine for col in range(width)
                       for row in range(height)))
 
         self.assertEqual(mines, minesFound,
@@ -104,7 +104,7 @@ class TestMinesweeper(unittest.TestCase):
         self.assertEqual(width, len(game.board[0]), 'Board width incorrect.')
         self.assertEqual(height, len(game.board), 'Board height incorrect.')
 
-        minesFound = (sum(game.board[row][col] for col in range(width)
+        minesFound = (sum(game.board[row][col].is_mine for col in range(width)
                       for row in range(height)))
         self.assertEqual(mines, minesFound,
                          'Wrong number of mines found.')
