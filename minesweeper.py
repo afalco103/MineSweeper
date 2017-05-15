@@ -7,14 +7,12 @@ import math
 class Space():
     """Class representing a space on the board."""
 
-    def __init__(self, is_mine=False, row=None, col=None):
+    def __init__(self, is_mine=False, **kwargs):
         """Set bools on the space."""
         self.is_mine = is_mine
         self.is_open = False
         self.is_flagged = False
         self.value = 0
-        self.row = row
-        self.col = col
 
     def __str__(self):
         """Return value if open, else blank space or F."""
@@ -30,9 +28,17 @@ class Space():
         """Return value if open, else blank space or F."""
         return self.__str__()
 
+    def open(self):
+        """Open the space."""
+        self.is_open = True
+
 
 class Minesweeper():
     """Minesweeper engine."""
+
+    def is_won(self):
+        """Determine whether the game is won or not."""
+        return self.opened_count == self.width * self.height - self.mine_count
 
     def generate_board(self, width, height, mine_count=0, mines=None):
         """Generate a new board."""
@@ -46,8 +52,8 @@ class Minesweeper():
         self.width = width
         self.height = height
         self.hit_mine = False
-        self.open_count = 0
-        self.board = ([[Space(is_mine=False, row=y, col=x)
+        self.opened_count = 0
+        self.board = ([[self.create_space(is_mine=False, row=y, col=x)
                       for x in range(0, width)]
                       for y in range(0, height)])
 
@@ -61,6 +67,10 @@ class Minesweeper():
             else:
                 self.board[math.floor(mine/width)][mine % width].is_mine = True
 
+    def create_space(self, row, col, is_mine=False):
+        """Create a new space object."""
+        return Space(is_mine=is_mine, row=row, col=col)
+
     def open_space(self, row, col):
         """Open a space on the board.
 
@@ -71,8 +81,6 @@ class Minesweeper():
         space = self.board[row][col]
         if space.is_flagged or space.is_open:
             return
-
-        space.is_open = True
         to_open = []
         if space.is_mine:
             self.hit_mine = True
@@ -90,6 +98,8 @@ class Minesweeper():
                         continue
                     space.value += self.board[row + y][col + x].is_mine
                     to_open.append((row + y, col + x))
+        space.open()
+        self.opened_count += 1
         if space.value == 0:
             while len(to_open) > 0:
                 coord = to_open.pop(0)
