@@ -7,20 +7,32 @@ import math
 class Space():
     """Class representing a space on the board."""
 
-    def __init__(self, is_mine=False):
+    def __init__(self, is_mine=False, row=None, col=None):
         """Set bools on the space."""
         self.is_mine = is_mine
         self.is_open = False
         self.is_flagged = False
+        self.value = 0
+        self.row = row
+        self.col = col
+
+    def __str__(self):
+        """Return value if open, else blank space or F."""
+        if self.is_flagged:
+            return "F"
+        if not self.is_open:
+            return " "
+        if self.is_mine:
+            return "X"
+        return str(self.value)
+
+    def __repr__(self):
+        """Return value if open, else blank space or F."""
+        return self.__str__()
 
 
 class Minesweeper():
     """Minesweeper engine."""
-
-    def __init__(self, input_handler=None, display=None):
-        """Set the input handler and ui."""
-        self.input_handler = input_handler
-        self.display = display
 
     def generate_board(self, width, height, mine_count=0, mines=None):
         """Generate a new board."""
@@ -35,7 +47,8 @@ class Minesweeper():
         self.height = height
         self.hit_mine = False
         self.open_count = 0
-        self.board = ([[Space(is_mine=False) for x in range(0, width)]
+        self.board = ([[Space(is_mine=False, row=y, col=x)
+                      for x in range(0, width)]
                       for y in range(0, height)])
 
         # distribute mines
